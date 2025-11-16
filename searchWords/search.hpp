@@ -3,4 +3,6 @@
 
 using namespace std;
 
-std::vector<string> binarySearch(vector<string> elem, vector<string> &vet, int n);
+std::vector<string> findOneWord(vector<string> &vet);
+
+std::vector<string> findListWords(vector<string> &vet);
