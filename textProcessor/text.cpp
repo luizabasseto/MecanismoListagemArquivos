@@ -1,93 +1,54 @@
-#include <iostream>
+#include "text.hpp"
 #include <fstream>
 #include <sstream>
-#include <vector>
-#include <string>
-#include <filesystem>
-#include <unordered_set>
+#include <algorithm>
 #include <cctype>
+#include <iostream>
 
-namespace fs = std::filesystem;
+TextProcessor::TextProcessor(const std::string& caminhoStopWords) {
+    carregarStopWords(caminhoStopWords);
+}
 
-// Remove pontuação de uma palavra
-std::string ClearWords(const std::string& palavra) {
+void TextProcessor::carregarStopWords(const std::string& caminhoArquivo) {
+    std::ifstream arquivo(caminhoArquivo);
+    if (!arquivo.is_open()) {
+        std::cerr << "Aviso: Nao foi possivel abrir o arquivo de stop words: " << caminhoArquivo << std::endl;
+        return;
+    }
+
+    std::string palavra;
+    while (arquivo >> palavra) {
+        stopWords.insert(limparPalavra(palavra));
+    }
+    arquivo.close();
+}
+
+std::string TextProcessor::limparPalavra(const std::string& palavra) {
     std::string limpa;
+    limpa.reserve(palavra.size());
+
     for (char c : palavra) {
-        if (std::isalpha((unsigned char)c)) {
-            limpa += std::tolower(c);
+        if (std::isalnum(static_cast<unsigned char>(c))) {
+            limpa += std::tolower(static_cast<unsigned char>(c));
         }
     }
     return limpa;
 }
 
-std::unordered_set<std::string> LoadingStopWords(const fs::path& path) {
-    std::unordered_set<std::string> stopwords;
-    std::ifstream file(path);
-
-    if (!file) {
-        std::cerr << "Erro ao abrir stopWords: " << path << "\n";
-        return stopwords;
-    }
-
+std::vector<std::string> TextProcessor::processar(const std::string& texto) {
+    std::vector<std::string> tokens;
+    std::stringstream ss(texto);
     std::string palavra;
-    while (file >> palavra) {
-        stopwords.insert(palavra);
-    }
 
-    return stopwords;
-}
+    while (ss >> palavra) {
+        std::string palavraLimpa = limparPalavra(palavra);
 
-std::vector<std::string> CreateNewArchiveClean(const std::string& directoryIn,
-                                               const std::string& directoryOut)
-{
-    std::vector<std::string> arquivosGerados;
-    fs::path dirPath(directoryIn);
-    fs::path dirOut(directoryOut);
+        if (palavraLimpa.empty()) continue;
 
-    auto stopwords = LoadingStopWords(dirPath / "stopwords.txt");
-
-    if (!fs::exists(dirOut)) {
-        fs::create_directory(dirOut);
-    }
-
-    for (const auto& entry : fs::directory_iterator(dirPath)) {
-
-        if (entry.path().filename() == "stopwords.txt")
-            continue;
-
-        if (entry.is_regular_file() && entry.path().extension() == ".txt") {
-
-            std::ifstream inFile(entry.path());
-            if (!inFile) continue;
-
-            fs::path newFile = dirOut / (entry.path().stem().string() + ".txt");
-
-            std::ofstream outFile(newFile);
-
-            std::string line;
-            while (std::getline(inFile, line)) {
-
-                std::stringstream ss(line);
-                std::string palavra;
-
-                while (ss >> palavra) {
-
-                    std::string limpa = ClearWords(palavra);
-
-                    if (limpa.empty()) continue;
-
-                    if (stopwords.find(limpa) == stopwords.end()) {
-                        outFile << limpa << " ";
-                    }
-                }
-
-                outFile << "\n";
-            }
-
-            arquivosGerados.push_back(newFile.string());
-            std::cout << "Gerado: " << newFile << "\n";
+        if (stopWords.find(palavraLimpa) == stopWords.end()) {
+            tokens.push_back(palavraLimpa);
         }
     }
 
-    return arquivosGerados;
+    return tokens;
 }

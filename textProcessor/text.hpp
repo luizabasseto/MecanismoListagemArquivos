@@ -1,18 +1,17 @@
-#ifndef ARCHIVES_HPP
-#define ARCHIVES_HPP
-
-#include <iostream>
 #include <vector>
 #include <string>
-#include <filesystem>
 #include <unordered_set>
 
-namespace fs = std::filesystem;
+class TextProcessor {
+private:
+    std::unordered_set<std::string> stopWords;
 
-std::string ClearWords(const std::string& palavra);
+    std::string limparPalavra(const std::string& palavra);
 
-std::unordered_set<std::string> loadingStopWords(const fs::path& path);
+    void carregarStopWords(const std::string& caminhoArquivo);
 
-std::vector<std::string> CreateNewArchiveClean(const std::string &directoryIn, const std::string &directoryOut);
+public:
+    TextProcessor(const std::string& caminhoStopWords = "library/stopwords.txt");
 
-#endif
+    std::vector<std::string> processar(const std::string& texto);
+};
