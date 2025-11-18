@@ -36,7 +36,7 @@ std::string TextProcessor::limparPalavra(const std::string& palavra) {
 }
 
 std::vector<std::string> TextProcessor::processar(const std::string& texto) {
-    std::vector<std::string> tokens;
+    std::vector<std::string> palavrasFinais;
     std::stringstream ss(texto);
     std::string palavra;
 
@@ -46,9 +46,9 @@ std::vector<std::string> TextProcessor::processar(const std::string& texto) {
         if (palavraLimpa.empty()) continue;
 
         if (stopWords.find(palavraLimpa) == stopWords.end()) {
-            tokens.push_back(palavraLimpa);
+            palavrasFinais.push_back(palavraLimpa);
         }
     }
 
-    return tokens;
+    return palavrasFinais;
 }
