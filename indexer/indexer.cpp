@@ -8,12 +8,19 @@ namespace fs = std::filesystem;
 
 Index Indexer::build(const std::string& caminhoDiretorio) {
     Index indice;
-    TextProcessor processador;
 
     if (!fs::exists(caminhoDiretorio) || !fs::is_directory(caminhoDiretorio)) {
         std::cout << "Erro, o diretório " << caminhoDiretorio << " é invalido."<<std::endl;
         return indice;
     }
+
+    fs::path caminhoAbsoluto = fs::absolute(caminhoDiretorio);
+    indice.setDiretorioBase(caminhoAbsoluto.string());
+
+    fs::path caminhoStop = fs::absolute("library/stopwords.txt");
+    indice.setArquivoStopWords(caminhoStop.string());
+
+    TextProcessor processador(caminhoStop.string());
 
     for (const auto& entry : fs::directory_iterator(caminhoDiretorio)) {
         

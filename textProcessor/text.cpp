@@ -4,9 +4,13 @@
 #include <algorithm>
 #include <cctype>
 #include <iostream>
+#include <filesystem>
+
+namespace fs = std::filesystem;
 
 TextProcessor::TextProcessor(const std::string& caminhoStopWords) {
-    loadStopWords(caminhoStopWords);
+    fs::path caminho = fs::absolute(caminhoStopWords);
+    loadStopWords(caminho.string());
 }
 
 void TextProcessor::loadStopWords(const std::string& caminhoArquivo) {

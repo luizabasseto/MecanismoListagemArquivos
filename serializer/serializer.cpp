@@ -44,6 +44,11 @@ void Serializer::createArchiveBin(const Index& index, const std::string& caminho
         return;
     }
 
+    writeString(out, index.diretorioBase); 
+    writeString(out, index.arquivoStopWords); 
+
+    writeInteger(out, index.nextId);
+
     writeInteger(out, index.nextId);
 
     int nArquivo = index.mapIdToName.size();
@@ -75,6 +80,10 @@ void Serializer::createArchiveBin(const Index& index, const std::string& caminho
 Index Serializer::ReadArchiveBin(const std::string& caminhoArquivo) {
     Index index;
     std::ifstream in(caminhoArquivo, std::ios::binary);
+
+    index.diretorioBase = readString(in);
+    index.arquivoStopWords = readString(in); 
+    index.nextId = readInteger(in);
 
     if (!in.is_open()) {
         std::cout << "Erro, arquivo de indice nao encontrado.\n";

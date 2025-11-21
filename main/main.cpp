@@ -59,7 +59,9 @@ int main(int argc, char* argv[]) {
         Index indices = serializer.ReadArchiveBin(arquivoTextos);
 
         QueryProcessor search(indices);
-        TextProcessor text;
+        std::string caminhoStopWords = indices.getArquivoStopWords();
+    
+        TextProcessor text(caminhoStopWords);
 
         std::vector<std::string> termosBusca;
         
