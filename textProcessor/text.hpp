@@ -1,3 +1,6 @@
+#ifndef TEXT_HPP
+#define TEXT_HPP
+
 #include <vector>
 #include <string>
 #include <unordered_set>
@@ -11,7 +14,9 @@ private:
     void loadStopWords(const std::string& caminhoArquivo);
 
 public:
-    TextProcessor(const std::string& caminhoStopWords = "../library/stopwords.txt");
+    TextProcessor(const std::string& caminhoStopWords = "library/stopwords.txt");
 
     std::vector<std::string> processedTexts(const std::string& texto);
 };
+
+#endif

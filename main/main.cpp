@@ -7,6 +7,7 @@
 #include "serializer/Serializer.hpp"
 #include "queryProcessor/search.hpp" 
 #include "indexer/indexer.hpp"
+#include "textProcessor/text.hpp"
 
 const std::string arquivoTextos = "index.dat";
 
@@ -26,6 +27,10 @@ int main(int argc, char* argv[]) {
             return 1;
         }
         std::string diretorio = argv[2];
+        if (!std::filesystem::exists(diretorio) || !std::filesystem::is_directory(diretorio)) {
+            std::cout << "Erro, o diretorio '" << diretorio << "' não existe ou é inválido." << std::endl;
+            return 1; 
+        }
         
         std::cout << "Iniciando indexação do diretório: " << diretorio << std::endl;
         
@@ -39,7 +44,8 @@ int main(int argc, char* argv[]) {
 
     } else if (comando == "buscar") {
         if (argc < 3) {
-            std::cout << "Uso: indice buscar <termo1> [termo2] ... [termoN]" << std::endl;
+            std::cout << "Erro, forma de comando errada." << std::endl;
+            std::cout << "Faça do seguinte modo: indice buscar <termo1> [termo2] ... [termoN]" << std::endl;
             return 1;
         }
 
@@ -52,14 +58,21 @@ int main(int argc, char* argv[]) {
         Serializer serializer;
         Index indices = serializer.ReadArchiveBin(arquivoTextos);
 
-        QueryProcessor processador(indices);
+        QueryProcessor search(indices);
+        TextProcessor text;
 
         std::vector<std::string> termosBusca;
+        
         for (int i = 2; i < argc; ++i) {
-            termosBusca.push_back(argv[i]);
+            std::string termo = argv[i];
+            std::vector<std::string> termosLimpo = text.processedTexts(termo);
+            
+            for (const auto& termo : termosLimpo) {
+                termosBusca.push_back(termo);
+            }
         }
 
-        std::vector<std::string> resultados = processador.searches(termosBusca);
+        std::vector<std::string> resultados = search.searches(termosBusca);
         
         if (resultados.empty()) {
             std::cout << "Nenhum documento encontrado para os termos fornecidos." << std::endl;

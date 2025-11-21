@@ -19,8 +19,13 @@ Index Indexer::build(const std::string& caminhoDiretorio) {
         
         if (entry.is_regular_file() && entry.path().extension() == ".txt") {
             
+            if (entry.path().filename() == "stopwords.txt") {
+                continue;
+            }
+            
             std::string caminhoArquivo = entry.path().string();
             std::ifstream arquivo(caminhoArquivo);
+
             
             if (arquivo.is_open()) {
                 std::stringstream buffer;
