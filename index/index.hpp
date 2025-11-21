@@ -7,21 +7,24 @@
 
 class Index {
 private:
-    std::unordered_map<std::string, std::set<int>> indiceInvertido;
+    std::unordered_map<std::string, std::set<int>> invertedIndex;
+    std::unordered_map<std::string, int> mapNameToId;
+    std::unordered_map<int, std::string> mapIdToName;
 
-    std::unordered_map<std::string, int> mapaNomeParaId;
-    std::unordered_map<int, std::string> mapaIdParaNome;
+    int nextId = 0;
 
-    int proximoId = 0;
-
-    int getIdArquivo(const std::string& nomeArquivo);
+    int getIdArchive(const std::string& nomeArquivo);
 
 public:
 
-    void adicionar(const std::string& palavra, const std::string& nomeArquivo);
+    void add(const std::string& palavra, const std::string& nomeArquivo);
 
-    std::set<int> getArquivosPorPalavra(const std::string& palavra) const;
+    std::set<int> getArchivesPerWords(const std::string& palavra) const;
 
-    std::string getNomeArquivoPorId(int id) const;
+    std::string getNameArchivesPerId(int id) const;
 
+    int getLastId() const { return nextId; }
+    void setLastId(int id) { nextId = id; }
+
+    friend class Serializer;
 };

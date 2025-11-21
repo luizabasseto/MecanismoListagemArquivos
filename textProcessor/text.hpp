@@ -6,12 +6,12 @@ class TextProcessor {
 private:
     std::unordered_set<std::string> stopWords;
 
-    std::string limparPalavra(const std::string& palavra);
+    std::string clearWords(const std::string& palavra);
 
-    void carregarStopWords(const std::string& caminhoArquivo);
+    void loadStopWords(const std::string& caminhoArquivo);
 
 public:
-    TextProcessor(const std::string& caminhoStopWords = "library/stopwords.txt");
+    TextProcessor(const std::string& caminhoStopWords = "../library/stopwords.txt");
 
-    std::vector<std::string> processar(const std::string& texto);
+    std::vector<std::string> processedTexts(const std::string& texto);
 };

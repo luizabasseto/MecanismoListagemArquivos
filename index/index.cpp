@@ -1,39 +1,39 @@
 #include "index.hpp"
 
-int Index::getIdArquivo(const std::string& nomeArquivo) {
-    if (mapaNomeParaId.count(nomeArquivo)) {
-        return mapaNomeParaId[nomeArquivo];
+int Index::getIdArchive(const std::string& nomeArquivo) {
+    if (mapNameToId.count(nomeArquivo)) {
+        return mapNameToId[nomeArquivo];
     }
 
-    int novoId = proximoId;
-    proximoId++;
+    int novoId = nextId;
+    nextId++;
 
-    mapaNomeParaId[nomeArquivo] = novoId;
-    mapaIdParaNome[novoId] = nomeArquivo;
+    mapNameToId[nomeArquivo] = novoId;
+    mapIdToName[novoId] = nomeArquivo;
 
     return novoId;
 }
 
-void Index::adicionar(const std::string& palavra, const std::string& nomeArquivo) {
-    int idDoc = getIdArquivo(nomeArquivo);
+void Index::add(const std::string& palavra, const std::string& nomeArquivo) {
+    int idDoc = getIdArchive(nomeArquivo);
 
-    std::set<int>& ids = indiceInvertido[palavra];
+    std::set<int>& ids = invertedIndex[palavra];
 
     ids.insert(idDoc);
 }
 
-std::set<int> Index::getArquivosPorPalavra(const std::string& palavra) const {
-    auto it = indiceInvertido.find(palavra);
-    if (it != indiceInvertido.end()) {
+std::set<int> Index::getArchivesPerWords(const std::string& palavra) const {
+    auto it = invertedIndex.find(palavra);
+    if (it != invertedIndex.end()) {
         return it->second; 
     }
     return std::set<int>();
 }
 
-std::string Index::getNomeArquivoPorId(int id) const {
-    auto it = mapaIdParaNome.find(id);
-    if (it != mapaIdParaNome.end()) {
+std::string Index::getNameArchivesPerId(int id) const {
+    auto it = mapIdToName.find(id);
+    if (it != mapIdToName.end()) {
         return it->second;
     }
-    return "ARQUIVO_DESCONHECIDO";
+    return "Arquivo_não_conhecido";
 }

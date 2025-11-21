@@ -1,23 +1,24 @@
 CXX = g++
-CXXFLAGS = -Wall -std=c++17
-TARGET = pathfinder
-SRCS = $(wildcard *.cpp)
-OBJS = $(SRCS:.cpp=.o)
+CXXFLAGS = -Wall -Wextra -std=c++17 -I.
 
-.PHONY: all clean
+TARGET = indice
+
+SRCS = $(wildcard *.cpp) $(wildcard */*.cpp)
+
+OBJS = $(SRCS:.cpp=.o)
 
 all: $(TARGET)
 
 $(TARGET): $(OBJS)
-    $(CXX) $(OBJS) -o $(TARGET)
+	$(CXX) $(OBJS) -o $(TARGET)
 
 %.o: %.cpp
-    $(CXX) $(CXXFLAGS) -c $< -o $@
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
-    @echo "Cleaning up..."
-    del /F /Q $(TARGET).exe *.o
-    @echo "Clean complete!"
+	@echo "Limpando arquivos compilados..."
+	rm -f $(OBJS) $(TARGET)
+	@echo "Limpeza concluída!"
 
 run: $(TARGET)
-    .\$(TARGET)
+	./$(TARGET)

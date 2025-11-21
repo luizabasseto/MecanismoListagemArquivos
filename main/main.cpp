@@ -1,49 +1,77 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include <set>
+#include <filesystem>
 
-#include "queryProcessor/search.hpp"
+#include "index/index.hpp"
+#include "serializer/Serializer.hpp"
+#include "queryProcessor/search.hpp" 
+#include "indexer/indexer.hpp"
+
+const std::string arquivoTextos = "index.dat";
 
 int main(int argc, char* argv[]) {
-    QueryProcessor searches;
-
+    
     if (argc < 2) {
-        std::cerr << "Erro: Nenhum comando fornecido." << std::endl;
-        std::cerr << "Uso: indice <construir|buscar> [argumentos]" << std::endl;
+        std::cout << "Nenhum comando foi fornecido." << std::endl;
         return 1;
     }
 
     std::string comando = argv[1];
 
     if (comando == "construir") {
-        if (argc != 3) {
-            std::cerr << "Uso: indice construir <caminho_do_diretorio>" << std::endl;
+       if (argc != 3) {
+            std::cout << "Erro, forma de comando errada." << std::endl;
+            std::cout << "Faça do seguinte modo: ./indice construir <caminho_do_diretorio>" << std::endl;
             return 1;
         }
         std::string diretorio = argv[2];
         
         std::cout << "Iniciando indexação do diretório: " << diretorio << std::endl;
         
+        Indexer indexer;
+        Index indices = indexer.build(diretorio);
         
-        std::cout << "Indexação concluída." << std::endl;
+        Serializer serializer;
+        serializer.createArchiveBin(indices, arquivoTextos);
+        
+        std::cout << "Indexação concluída. Índice salvo em " << arquivoTextos << std::endl;
 
     } else if (comando == "buscar") {
         if (argc < 3) {
-            std::cerr << "Uso: indice buscar <termo1> [termo2] ... [termoN]" << std::endl;
+            std::cout << "Uso: indice buscar <termo1> [termo2] ... [termoN]" << std::endl;
             return 1;
         }
 
-        std::vector<std::string> wordsLists;
-        for (int i = 2; i < argc; ++i) {
-            wordsLists.push_back(argv[i]);
+        if (!std::filesystem::exists(arquivoTextos)) {
+            std::cout << "Erro, arquivo '" << arquivoTextos << "' não encontrado." << std::endl;
+            std::cout << "Execute o comando 'construir' primeiro." << std::endl;
+            return 1;
         }
 
-        std::set<std::string>  = searches.buscar(wordsLists);
+        Serializer serializer;
+        Index indices = serializer.ReadArchiveBin(arquivoTextos);
+
+        QueryProcessor processador(indices);
+
+        std::vector<std::string> termosBusca;
+        for (int i = 2; i < argc; ++i) {
+            termosBusca.push_back(argv[i]);
+        }
+
+        std::vector<std::string> resultados = processador.searches(termosBusca);
         
+        if (resultados.empty()) {
+            std::cout << "Nenhum documento encontrado para os termos fornecidos." << std::endl;
+        } else {
+            std::cout << "Documentos encontrados (" << resultados.size() << "):" << std::endl;
+            for (const auto& doc : resultados) {
+                std::cout << doc << std::endl;
+            }
+        }
 
     } else {
-        std::cerr << "Comando desconhecido: " << comando << std::endl;
+        std::cout << "Comando desconhecido: " << comando << std::endl;
         return 1;
     }
 

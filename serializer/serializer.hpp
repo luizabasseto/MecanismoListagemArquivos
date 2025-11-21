@@ -4,14 +4,11 @@
 
 class Serializer{
 
-    private:
-        const Index& index;
-
     public:
-        Serializer(const Index& idx);
+        Serializer() = default;
 
-        Index ReadArchiveBin(const std::string& caminhoArquivoBIN);
+        Index ReadArchiveBin(const std::string& caminhoArquivo);
 
-        void createArchiveBin(Index index, const std::string& caminhoArquivo);
+        void createArchiveBin(const Index& index, const std::string& caminhoArquivo);
 
 };

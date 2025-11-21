@@ -6,24 +6,24 @@
 #include <iostream>
 
 TextProcessor::TextProcessor(const std::string& caminhoStopWords) {
-    carregarStopWords(caminhoStopWords);
+    loadStopWords(caminhoStopWords);
 }
 
-void TextProcessor::carregarStopWords(const std::string& caminhoArquivo) {
+void TextProcessor::loadStopWords(const std::string& caminhoArquivo) {
     std::ifstream arquivo(caminhoArquivo);
     if (!arquivo.is_open()) {
-        std::cerr << "Aviso: Nao foi possivel abrir o arquivo de stop words: " << caminhoArquivo << std::endl;
+        std::cout << "não foi possivel abrir o arquivo de stop words: " << caminhoArquivo << std::endl;
         return;
     }
 
     std::string palavra;
     while (arquivo >> palavra) {
-        stopWords.insert(limparPalavra(palavra));
+        stopWords.insert(clearWords(palavra));
     }
     arquivo.close();
 }
 
-std::string TextProcessor::limparPalavra(const std::string& palavra) {
+std::string TextProcessor::clearWords(const std::string& palavra) {
     std::string limpa;
     limpa.reserve(palavra.size());
 
@@ -35,13 +35,13 @@ std::string TextProcessor::limparPalavra(const std::string& palavra) {
     return limpa;
 }
 
-std::vector<std::string> TextProcessor::processar(const std::string& texto) {
+std::vector<std::string> TextProcessor::processedTexts(const std::string& texto) {
     std::vector<std::string> palavrasFinais;
     std::stringstream ss(texto);
     std::string palavra;
 
     while (ss >> palavra) {
-        std::string palavraLimpa = limparPalavra(palavra);
+        std::string palavraLimpa = clearWords(palavra);
 
         if (palavraLimpa.empty()) continue;
 
