@@ -14,6 +14,7 @@ $(TARGET): $(OBJS)
 
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
+	@echo "Arquivos .o montados!"
 
 clean:
 	@echo "Limpando arquivos compilados..."

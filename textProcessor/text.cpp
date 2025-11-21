@@ -32,7 +32,8 @@ std::string TextProcessor::clearWords(const std::string& palavra) {
     limpa.reserve(palavra.size());
 
     for (char c : palavra) {
-        if (std::isalnum(static_cast<unsigned char>(c))) {
+        if (!std::ispunct(static_cast<unsigned char>(c)) && 
+            !std::isspace(static_cast<unsigned char>(c))) {
             limpa += std::tolower(static_cast<unsigned char>(c));
         }
     }

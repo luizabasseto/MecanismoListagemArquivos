@@ -34,9 +34,10 @@ int main(int argc, char* argv[]) {
         
         std::cout << "Iniciando indexação do diretório: " << diretorio << std::endl;
         
+        
         Indexer indexer;
         Index indices = indexer.build(diretorio);
-        
+        indices.imprimirDebug();
         Serializer serializer;
         serializer.createArchiveBin(indices, arquivoTextos);
         
