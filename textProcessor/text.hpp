@@ -13,6 +13,8 @@ private:
 
     void loadStopWords(const std::string& caminhoArquivo);
 
+    std::string converterAcentos(std::string palavra);
+
 public:
     TextProcessor(const std::string& caminhoStopWords = "library/stopwords.txt");
 

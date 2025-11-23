@@ -5,8 +5,33 @@
 #include <cctype>
 #include <iostream>
 #include <filesystem>
+#include <utility>
 
 namespace fs = std::filesystem;
+
+
+std::string TextProcessor::converterAcentos(std::string palavra) {
+    static const std::vector<std::pair<std::string, std::string>> substituicoes = {
+        {"Á", "á"}, {"À", "à"}, {"Ã", "ã"}, {"Â", "â"},
+        {"É", "é"}, {"Ê", "ê"},
+        {"Í", "í"},
+        {"Ó", "ó"}, {"Õ", "õ"}, {"Ô", "ô"},
+        {"Ú", "ú"}, {"Ü", "ü"},
+        {"Ç", "ç"},
+    };
+
+    for (const auto& par : substituicoes) {
+        const std::string& maiuscula = par.first;
+        const std::string& minuscula = par.second;
+
+        size_t pos = 0;
+        while ((pos = palavra.find(maiuscula, pos)) != std::string::npos) {
+            palavra.replace(pos, maiuscula.length(), minuscula);
+            pos += minuscula.length();
+        }
+    }
+    return palavra;
+}
 
 TextProcessor::TextProcessor(const std::string& caminhoStopWords) {
     //pega o caminho absoluto do arquivo de StopWords
@@ -33,18 +58,22 @@ void TextProcessor::loadStopWords(const std::string& caminhoArquivo) {
 
 std::string TextProcessor::clearWords(const std::string& palavra) {
     std::string limpa;
-    //reserve a qauntidade de espaço necessário para a palavra
     limpa.reserve(palavra.size());
 
     for (char c : palavra) {
-        //passa caractere por caractere da palavra, verifica se não é espaço e se não é pontuação
-        if (!std::ispunct(static_cast<unsigned char>(c)) && 
-            !std::isspace(static_cast<unsigned char>(c))) {
-                //se não é, transforma o caractere para minusculo
-            limpa += std::tolower(static_cast<unsigned char>(c));
+        unsigned char uc = static_cast<unsigned char>(c);
+
+        if (uc == 0xE2 || uc == 0x80 || uc == 0x9C || uc == 0x9D) {
+            continue; 
+        }
+        
+        if (!std::ispunct(uc) && !std::isspace(uc)) {
+            limpa += std::tolower(uc);
         }
     }
-    //retorna a palavra limpa
+
+    limpa = converterAcentos(limpa);
+
     return limpa;
 }
 
