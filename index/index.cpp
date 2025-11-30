@@ -44,19 +44,3 @@ std::string Index::getNameArchivesPerId(int id) const {
     }
     return "Arquivo_não_conhecido";
 }
-
-
-
-void Index::imprimirDebug() const {
-    std::cout << "\n=== DEBUG: INDICE NA MEMORIA ===\n";
-    
-    for (const auto& par : invertedIndex) {
-        std::cout << "[" << par.first << "] -> { ";
-        for (int id : par.second) {
-            std::cout << id << " ";
-        }
-        std::cout << "}\n";
-
-    }
-    std::cout << "================================\n";
-}
