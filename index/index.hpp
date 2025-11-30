@@ -36,5 +36,4 @@ public:
     void setArquivoStopWords(const std::string& caminho) { arquivoStopWords = caminho; }
     std::string getArquivoStopWords() const { return arquivoStopWords; }
 
-    void imprimirDebug() const;
 };
